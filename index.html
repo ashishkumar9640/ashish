@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>E-Learning Course Entry</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f2f2f2;
+      padding: 30px;
+    }
+    h2 {
+      text-align: center;
+    }
+    form {
+      background: #fff;
+      max-width: 500px;
+      margin: auto;
+      padding: 20px;
+      border-radius: 6px;
+    }
+    input, select, textarea, button {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 12px;
+    }
+    button {
+      background: #007bff;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<h2>Create Course (MongoDB – One Document)</h2>
+
+<form id="courseForm">
+
+  <!-- Course -->
+  <input type="text" id="title" placeholder="Course Title" required />
+  <textarea id="description" placeholder="Course Description"></textarea>
+  <input type="number" id="price" placeholder="Price" />
+  <select id="level">
+    <option value="beginner">Beginner</option>
+    <option value="intermediate">Intermediate</option>
+    <option value="advanced">Advanced</option>
+  </select>
+
+  <!-- Instructor -->
+  <input type="text" id="instructorName" placeholder="Instructor Name" required />
+  <input type="email" id="instructorEmail" placeholder="Instructor Email" required />
+
+  <!-- Module -->
+  <input type="text" id="moduleTitle" placeholder="Module Title" />
+  <input type="number" id="moduleOrder" placeholder="Module Order" />
+
+  <!-- Lesson -->
+  <input type="text" id="lessonTitle" placeholder="Lesson Title" />
+  <select id="lessonType">
+    <option value="video">Video</option>
+    <option value="article">Article</option>
+    <option value="coding">Coding</option>
+  </select>
+  <textarea id="lessonContent" placeholder="Lesson Content"></textarea>
+
+  <!-- Enrollment -->
+  <input type="text" id="studentName" placeholder="Student Name" />
+  <input type="email" id="studentEmail" placeholder="Student Email" />
+
+  <!-- Payment -->
+  <input type="number" id="paymentAmount" placeholder="Payment Amount" />
+  <select id="paymentStatus">
+    <option value="pending">Pending</option>
+    <option value="completed">Completed</option>
+    <option value="failed">Failed</option>
+  </select>
+
+  <button type="submit">Save Course</button>
+</form>
+
+<script>
+  document.getElementById("courseForm").addEventListener("submit", async function (e) {
+    e.preventDefault();
+
+    const courseDocument = {
+      title: document.getElementById("title").value,
+      description: document.getElementById("description").value,
+      price: Number(document.getElementById("price").value),
+      level: document.getElementById("level").value,
+      is_published: true,
+      created_at: new Date(),
+
+      instructor: {
+        full_name: document.getElementById("instructorName").value,
+        email: document.getElementById("instructorEmail").value
+      },
+
+      modules: [
+        {
+          title: document.getElementById("moduleTitle").value,
+          module_order: Number(document.getElementById("moduleOrder").value),
+          lessons: [
+            {
+              title: document.getElementById("lessonTitle").value,
+              lesson_type: document.getElementById("lessonType").value,
+              content: document.getElementById("lessonContent").value,
+              lesson_order: 1,
+              created_at: new Date()
+            }
+          ]
+        }
+      ],
+
+      enrollments: [
+        {
+          full_name: document.getElementById("studentName").value,
+          email: document.getElementById("studentEmail").value,
+          enrolled_at: new Date(),
+
+          payment: {
+            amount: Number(document.getElementById("paymentAmount").value),
+            payment_status: document.getElementById("paymentStatus").value,
+            created_at: new Date()
+          },
+
+          certificate: {
+            issued: false
+          }
+        }
+      ]
+    };
+
+    const response = await fetch("http://localhost:3000/courses", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(courseDocument)
+    });
+
+    const result = await response.json();
+    alert("Course saved in MongoDB");
+    console.log(result);
+  });
+</script>
+
+</body>
+</html>
